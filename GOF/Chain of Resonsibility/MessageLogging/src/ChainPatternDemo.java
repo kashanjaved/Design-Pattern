@@ -10,29 +10,47 @@ package javaapplication2;
  * @author fa20-bse-040
  */
 public class ChainPatternDemo {
-	
-   private static AbstractLogger getChainOfLoggers(){
 
-      AbstractLogger errorLogger = new ErrorLogger(AbstractLogger.ERROR);
-      AbstractLogger fileLogger = new FileLogger(AbstractLogger.DEBUG);
-      AbstractLogger consoleLogger = new ConsoleLogger(AbstractLogger.INFO);
+    private static AbstractLogger getChainOfLoggersForError() {
+        AbstractLogger errorLogger = new ErrorLogger(AbstractLogger.ERROR);
+        AbstractLogger fileLogger = new FileLogger(AbstractLogger.DEBUG);
+        AbstractLogger consoleLogger = new ConsoleLogger(AbstractLogger.INFO);
 
-      errorLogger.setNextLogger(fileLogger);
-      fileLogger.setNextLogger(consoleLogger);
+        errorLogger.setNextLogger(fileLogger);
+        fileLogger.setNextLogger(consoleLogger);
 
-      return errorLogger;	
-   }
+        return errorLogger;
+    }
 
-   public static void main(String[] args) {
-      AbstractLogger loggerChain = getChainOfLoggers();
+    private static AbstractLogger getChainOfLoggersForAllLevels() {
+        AbstractLogger errorLogger = new ErrorLogger(AbstractLogger.ERROR);
+        AbstractLogger fileLogger = new FileLogger(AbstractLogger.DEBUG);
+        AbstractLogger consoleLogger = new ConsoleLogger(AbstractLogger.INFO);
+        AbstractLogger databaseLogger = new DatabaseLogger(AbstractLogger.WARNING);
 
-      loggerChain.logMessage(AbstractLogger.INFO, 
-         "This is an information.");
+        errorLogger.setNextLogger(fileLogger);
+        fileLogger.setNextLogger(consoleLogger);
+        consoleLogger.setNextLogger(databaseLogger);
 
-      loggerChain.logMessage(AbstractLogger.DEBUG, 
-         "This is an debug level information.");
+        return errorLogger;
+    }
 
-      loggerChain.logMessage(AbstractLogger.ERROR, 
-         "This is an error information.");
-   }
+    public static void main(String[] args) {
+        // Create separate chains for ERROR, DEBUG, INFO, and WARNING
+        AbstractLogger errorChain = getChainOfLoggersForError();
+        AbstractLogger allLevelsChain = getChainOfLoggersForAllLevels();
+
+        // Log messages using the ERROR chain
+        errorChain.logMessage(AbstractLogger.ERROR, "This is an error message.");
+        errorChain.logMessage(AbstractLogger.DEBUG, "This is a debug message (not logged)....");
+        errorChain.logMessage(AbstractLogger.INFO, "This is an info message (not logged).");
+
+        System.out.println("----------------------");
+
+        // Log messages using the INFO, DEBUG, WARNING, ERROR chain
+        allLevelsChain.logMessage(AbstractLogger.ERROR, "This is an error message.");
+        allLevelsChain.logMessage(AbstractLogger.DEBUG, "This is a debug message.");
+        allLevelsChain.logMessage(AbstractLogger.INFO, "This is an info message.");
+        allLevelsChain.logMessage(AbstractLogger.WARNING, "This is a warning message.");
+    }
 }

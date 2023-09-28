@@ -9,6 +9,13 @@ package javaapplication2;
  *
  * @author fa20-bse-040
  */
-public class DatabaseLogger {
-    
+public class DatabaseLogger extends AbstractLogger {
+    public DatabaseLogger(int level){
+        this.level = level;
+    }
+
+    @Override
+    protected void write(String message) {		
+        System.out.println("Database::Logger: " + message);
+    }
 }
